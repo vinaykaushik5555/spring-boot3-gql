@@ -198,38 +198,11 @@ mutation {
 }
 Delete a Product
 graphql
-Copy code
+
 mutation {
   deleteProduct(id: 1)
 }
-Project Structure
-plaintext
-Copy code
-src/
-├── main/
-│   ├── java/
-│   │   └── com/
-│   │       └── example/
-│   │           └── graphql/
-│   │               ├── model/
-│   │               │   └── Product.java
-│   │               ├── repository/
-│   │               │   └── ProductRepository.java
-│   │               ├── resolver/
-│   │               │   ├── ProductMutationResolver.java
-│   │               │   └── ProductQueryResolver.java
-│   │               ├── service/
-│   │               │   └── ProductService.java
-│   │               └── GraphqlAppApplication.java
-│   └── resources/
-│       ├── application.properties
-│       └── schema.graphqls
-└── test/
-    └── java/
-        └── com/
-            └── example/
-                └── graphql/
-                    └── GraphqlAppApplicationTests.java
+
 Contributing
 Contributions are welcome! Please fork this repository and submit a pull request for any features, bug fixes, or enhancements.
 
