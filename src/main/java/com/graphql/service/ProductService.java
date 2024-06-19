@@ -1,6 +1,7 @@
 package com.graphql.service;
 
 import com.graphql.entity.Product;
+import com.graphql.exceptions.ProductNotFoundException;
 import com.graphql.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ public class ProductService {
     public List<Product> getProductsByCategory(String category) {
         return productRepository.findByCategory(category);
     }
+
     public Optional<Product> getProductById(Long id) {
         return productRepository.findById(id);
     }
@@ -45,7 +47,13 @@ public class ProductService {
 
     public void deleteProduct(Long id) {
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                .orElseThrow(() -> new ProductNotFoundException("Product not found"));
         productRepository.delete(product);
+    }
+
+    public Product updateStock(Long id, Integer stock) {
+        Product product = productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException("product not found ID:" + id));
+        product.setStock(Math.addExact(product.getStock().intValue(), stock.intValue()));
+        return productRepository.save(product);
     }
 }
