@@ -43,165 +43,99 @@ cd spring-boot3-gql
 
 Navigate to the project directory:
 
-sh
-Copy code
+
 cd spring-boot3-gql
 Build the project using Maven:
 
-sh
-Copy code
+
 mvn clean install
 Run the application:
 
-sh
-Copy code
 mvn spring-boot:run
 Access the application:
+```
 
-The application will start and be available at http://localhost:8080.
+# graphiql-interface
+The application will start and be available at http://localhost:9191/graphiql?path=/graphql
 
-GraphQL Schema
-The GraphQL schema is defined in the schema.graphqls file located in the src/main/resources directory.
+# GraphQL Schema
+The GraphQL schema is defined in the schema.graphqls file located in the src/main/resources/graphql directory.
 
-schema.graphqls
-graphql
+    type Product {
+      id: ID!
+      name: String!
+      description: String
+      price: Float
+      stock: Int
+      category: String
+      manufacturer: String
+      createdDate: String
+      }
 
-type Query {
+    type Query {
+    
     products: [Product]
     product(id: ID!): Product
     productsByCategory(category: String!): [Product]
+    }
+    type Mutation {
+     createProduct(
+         name: String!,
+         description: String,
+         price: Float,
+         stock: Int,
+         category: String,
+         manufacturer: String
+     ): Product
+     updateStock(id: Int!, stock: Int!): Product
+    } 
+   
+# sample-queries-and-mutations
+    query Products {
+    products {
+        id
+        name
+        description
+        price
+        stock
+        category
+        manufacturer
+        createdDate
+    }
+    productsByCategory(category: null) {
+        id
+        name
+        description
+        price
+        stock
+        category
+        manufacturer
+        createdDate
+    }
+    product(id: null) {
+        id
+        name
+        description
+        price
+        stock
+        category
+        manufacturer
+        createdDate
+    }
 }
 
-type Mutation {
-    createProduct(
-        name: String!,
-        description: String,
-        price: Float,
-        quantity: Int,
-        category: String,
-        manufacturer: String
-    ): Product
-
-    updateProduct(
-        id: ID!,
-        name: String,
-        description: String,
-        price: Float,
-        quantity: Int,
-        category: String,
-        manufacturer: String
-    ): Product
-
-    deleteProduct(id: ID!): Boolean
-}
-
-type Product {
-    id: ID!
-    name: String!
-    description: String
-    price: Float
-    quantity: Int
-    category: String
-    manufacturer: String
-    createdDate: String
-}
-Usage
-GraphiQL Interface
-The GraphiQL interface is enabled and can be accessed at http://localhost:8080/graphiql. It provides an interactive UI to test GraphQL queries and mutations.
-
-Sample Queries and Mutations
-Query All Products
-graphql
-query {
-  products {
-    id
-    name
-    description
-    price
-    quantity
-    category
-    manufacturer
-    createdDate
-  }
-}
-Query Product by ID
-graphql
-Copy code
-query {
-  product(id: 1) {
-    id
-    name
-    description
-    price
-    quantity
-    category
-    manufacturer
-    createdDate
-  }
-}
-Query Products by Category
-
-query {
-  productsByCategory(category: "Electronics") {
-    id
-    name
-    description
-    price
-    quantity
-    category
-    manufacturer
-    createdDate
-  }
-}
-Create a Product
-
-mutation {
-  createProduct(
-    name: "New Product"
-    description: "New Product Description"
-    price: 99.99
-    quantity: 100
-    category: "New Category"
-    manufacturer: "New Manufacturer"
-  ) {
-    id
-    name
-    description
-    price
-    quantity
-    category
-    manufacturer
-    createdDate
-  }
-}
-Update a Product
-graphql
-mutation {
-  updateProduct(
-    id: 1
-    name: "Updated Product"
-    description: "Updated Description"
-    price: 199.99
-    quantity: 50
-    category: "Updated Category"
-    manufacturer: "Updated Manufacturer"
-  ) {
-    id
-    name
-    description
-    price
-    quantity
-    category
-    manufacturer
-    createdDate
-  }
-}
-Delete a Product
-graphql
-
-mutation {
-  deleteProduct(id: 1)
-}
+    mutation UpdateStock {
+      updateStock(id: 1, stock: 34) {
+      id
+      name
+      description
+      price
+      stock
+      category
+      manufacturer
+      createdDate
+      }
+    }
 
 Contributing
 Contributions are welcome! Please fork this repository and submit a pull request for any features, bug fixes, or enhancements.
