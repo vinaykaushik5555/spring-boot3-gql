@@ -1,30 +1,86 @@
+"""
+Represents a product in the system
+"""
 type Product {
-     id: ID!
-     name: String!
-     description: String
-     price: Float
-     stock: Int
-     category: String
-     manufacturer: String
-     createdDate: String
- }
+    id: ID!
+    """
+    The name of the product
+    """
+    name: String!
+    """
+    The description of the product
+    """
+    description: String
+    """
+    The price of the product
+    """
+    price: Float
+    """
+    The stock quantity of the product
+    """
+    stock: Int
+    """
+    The category of the product
+    """
+    category: String
+    """
+    The manufacturer of the product
+    """
+    manufacturer: String
+    """
+    The date when the product was created
+    """
+    createdDate: String
+}
 
- type Query{
-
+"""
+The root query type for the API
+"""
+type Query {
+    """
+    Returns a list of all products
+    """
     products: [Product]
+
+    """
+    Returns a product by its ID
+    - id: The unique identifier of the product
+    """
     product(id: ID!): Product
+
+    """
+    Returns a list of products by category
+    - category: The category of the products
+    """
     productsByCategory(category: String!): [Product]
+}
 
- }
- type Mutation {
-     createProduct(
-         name: String!,
-         description: String,
-         price: Float,
-         stock: Int,
-         category: String,
-         manufacturer: String
-     ): Product
+"""
+The root mutation type for the API
+"""
+type Mutation {
+    """
+    Creates a new product
+    - name: The name of the product
+    - description: The description of the product
+    - price: The price of the product
+    - stock: The stock quantity of the product
+    - category: The category of the product
+    - manufacturer: The manufacturer of the product
+    """
+    createProduct(
+        name: String!,
+        description: String,
+        price: Float,
+        stock: Int,
+        category: String,
+        manufacturer: String
+    ): Product
 
-     updateStock(id: Int!, stock: Int!): Product
-   }
+    """
+    Updates the stock quantity of a product
+    - id: The unique identifier of the product
+    - stock: The new stock quantity of the product
+    """
+    updateStock(id: ID!, stock: Int!): Product
+}
