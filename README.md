@@ -137,10 +137,10 @@ The GraphQL schema is defined in the schema.graphqls file located in the src/mai
       }
     }
 
-Contributing
+# Contributing
 Contributions are welcome! Please fork this repository and submit a pull request for any features, bug fixes, or enhancements.
 
-License
+# License
 This project is licensed under the MIT License. See the LICENSE file for details.
 
 This `README.md` file provides a comprehensive overview of the project, including setup instructions, links to relevant parts of the repository, and examples of how to use the GraphQL API.
