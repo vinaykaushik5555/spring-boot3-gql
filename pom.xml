@@ -14,7 +14,7 @@
 	<name>graphql-app</name>
 	<description>Demo project for GraphQL</description>
 	<properties>
-		<java.version>22</java.version>
+		<java.version>17</java.version>
 	</properties>
 	<dependencies>
 		<!-- https://mvnrepository.com/artifact/com.graphql-java-kickstart/graphql-spring-boot-starter -->
