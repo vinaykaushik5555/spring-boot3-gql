@@ -6,7 +6,7 @@ pipeline {
         ECR_REPOSITORY = 'pos'
         IMAGE_TAG = "product-graphql-${BUILD_NUMBER}"
         GIT_REPO_URL = 'https://github.com/vinaykaushik5555/spring-boot3-gql'
-        GIT_BRANCH = 'main'
+        GIT_BRANCH = 'master'
         MAVEN_TOOL = 'Maven3' // Ensure this matches the Maven installation name in Jenkins
         AWS_CREDENTIALS_ID = 'aws-ecr-credentials' // Jenkins credentials ID for AWS
         GIT_CREDENTIALS_ID = 'github-credentials' // Jenkins credentials ID for GitHub
@@ -72,41 +72,6 @@ pipeline {
                             --set image.tag=${IMAGE_TAG} \
                             --set image.pullPolicy=Always
                         """
-                }
-            }
-        }
-        stage('Retrieve Service URL') {
-            steps {
-                script {
-                    // Wait for the LoadBalancer IP to be assigned
-                    timeout(time: 5, unit: 'MINUTES') {
-                        waitUntil {
-                            def svc = sh(
-                                script: "kubectl get svc ${SERVICE_NAME} --namespace ${KUBE_NAMESPACE} -o jsonpath='{.status.loadBalancer.ingress[0].hostname}'",
-                                returnStdout: true
-                            ).trim()
-                            return svc
-                        }
-                    }
-                    // Retrieve the service IP
-                    def serviceIP = sh(
-                        script: "kubectl get svc ${SERVICE_NAME} --namespace ${KUBE_NAMESPACE} -o jsonpath='{.status.loadBalancer.ingress[0].hostname}'",
-                        returnStdout: true
-                    ).trim()
-                    if (serviceIP) {
-                        echo "Application is accessible at: http://${serviceIP}:${SERVICE_PORT}"
-                    } else {
-                        echo "Service IP could not be retrieved. Ensure the service has an external endpoint."
-                    }
-                }
-            }
-        }
-        stage('Delete Deployment (Manual)') {
-            steps {
-                script {
-                    input message: 'Approve deletion of deployment?', ok: 'Delete'
-                    sh "helm uninstall ${RELEASE_NAME} --namespace ${KUBE_NAMESPACE}"
-                    echo "Deployment deleted successfully."
                 }
             }
         }
