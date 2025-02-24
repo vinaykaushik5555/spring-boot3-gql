@@ -2,7 +2,7 @@
 ingress:
   enabled: false  # Set to true if using an Ingress controller
 
-replicaCount: 3  # Ensures High Availability
+replicaCount: 1  # Ensures High Availability
 
 image:
   repository: vinaykaushik/product-service  # Docker Hub repo
