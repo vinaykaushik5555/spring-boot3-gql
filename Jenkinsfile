@@ -37,7 +37,7 @@ pipeline {
 
         stage('Build and Run Unit Tests') {
             steps {
-                    sh 'mvn clean test'
+                    sh 'mvn clean package'
 
             }
         }
