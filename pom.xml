@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.graphql</groupId>
-	<artifactId>graphql-app</artifactId>
+	<artifactId>product-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>graphql-app</name>
 	<description>Demo project for GraphQL</description>

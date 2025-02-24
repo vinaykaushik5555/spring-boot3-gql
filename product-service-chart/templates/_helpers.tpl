@@ -1,7 +1,7 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "product-graphql.name" -}}
+{{- define "product-service-chart.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
@@ -10,7 +10,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "product-graphql.fullname" -}}
+{{- define "product-service-chart.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -26,16 +26,16 @@ If release name contains chart name it will be used as a full name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "product-graphql.chart" -}}
+{{- define "product-service-chart.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Common labels
 */}}
-{{- define "product-graphql.labels" -}}
-helm.sh/chart: {{ include "product-graphql.chart" . }}
-{{ include "product-graphql.selectorLabels" . }}
+{{- define "product-service-chart.labels" -}}
+helm.sh/chart: {{ include "product-service-chart.chart" . }}
+{{ include "product-service-chart.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -45,17 +45,17 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 */}}
-{{- define "product-graphql.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "product-graphql.name" . }}
+{{- define "product-service-chart.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "product-service-chart.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
 Create the name of the service account to use
 */}}
-{{- define "product-graphql.serviceAccountName" -}}
+{{- define "product-service-chart.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create }}
-{{- default (include "product-graphql.fullname" .) .Values.serviceAccount.name }}
+{{- default (include "product-service-chart.fullname" .) .Values.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}

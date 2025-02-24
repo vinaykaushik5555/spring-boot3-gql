@@ -1,26 +1,28 @@
 pipeline {
     agent any
+
     environment {
-        AWS_REGION = 'ap-south-1'
-        ECR_REGISTRY = '660334028312.dkr.ecr.ap-south-1.amazonaws.com'
-        ECR_REPOSITORY = 'pos'
-        IMAGE_TAG = "product-graphql-${BUILD_NUMBER}"
         GIT_REPO_URL = 'https://github.com/vinaykaushik5555/spring-boot3-gql'
-        GIT_BRANCH = 'master'
-        MAVEN_TOOL = 'Maven3' // Ensure this matches the Maven installation name in Jenkins
-        AWS_CREDENTIALS_ID = 'aws-ecr-credentials' // Jenkins credentials ID for AWS
-        GIT_CREDENTIALS_ID = 'github-credentials' // Jenkins credentials ID for GitHub
-        KUBECONFIG = '/var/lib/jenkins/.kube/config' // Path to kubeconfig file
+        GIT_BRANCH = 'main'
+        MAVEN_TOOL = 'Maven3'
+        DOCKER_HUB_USERNAME = 'vinaykaushik'
+        DOCKER_HUB_REPO = 'user-management-service'
+        IMAGE_TAG = "user-management-service-${BUILD_NUMBER}"
+        GIT_CREDENTIALS_ID = 'github-credentials'
+        DOCKER_CREDENTIALS_ID = 'docker-hub-credentials'
+        KUBECONFIG = '/etc/kubernetes/config'
         KUBE_NAMESPACE = 'pos'
-        RELEASE_NAME = 'product'
-        SERVICE_NAME = 'product-service' // Update if your service name differs
-        SERVICE_PORT = '8080' // Update to your service's port if different
+        RELEASE_NAME = 'product-service-gql'
+        SERVICE_NAME = 'product-service-gql'
+        SERVICE_PORT = '8080'
     }
+
     tools {
         maven "${MAVEN_TOOL}"
     }
+
     stages {
-        stage('Cloning Git Repository') {
+        stage('Clone Git Repository') {
             steps {
                 checkout([
                     $class: 'GitSCM',
@@ -32,56 +34,67 @@ pipeline {
                 ])
             }
         }
-        stage('Building Maven Project') {
-            steps {
-                    sh 'mvn clean package'
-            }
-        }
-        stage('Building Docker Image') {
-            steps {
-                    script {
-                        dockerImage = docker.build("${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}")
 
+        stage('Build and Run Unit Tests') {
+            steps {
+                dir('user-management-service') {
+                    sh 'mvn clean test'
                 }
             }
         }
-        stage('Pushing Docker Image to ECR') {
+
+
+        stage('Login to Docker Hub') {
             steps {
                 script {
-                    docker.withRegistry("https://${ECR_REGISTRY}", "ecr:${AWS_REGION}:${AWS_CREDENTIALS_ID}") {
-                        dockerImage.push()
+                    withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS_ID}", usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        sh "echo ${DOCKER_PASSWORD} | docker login -u ${DOCKER_USER} --password-stdin"
                     }
                 }
             }
         }
-        stage('Approval for Deployment') {
+
+        stage('Build Docker Image') {
             steps {
-                script {
-                    // Wait for manual approval before deployment
-                    input message: 'Approve deployment to Kubernetes?', ok: 'Deploy'
+                dir('user-management-service') {
+                    script {
+                        sh "docker build -t ${DOCKER_HUB_USERNAME}/${DOCKER_HUB_REPO}:${IMAGE_TAG} ."
+                    }
                 }
             }
         }
-        stage('Deploying with Helm') {
+
+        stage('Push Docker Image to Docker Hub') {
             steps {
+                script {
+                    sh "docker push ${DOCKER_HUB_USERNAME}/${DOCKER_HUB_REPO}:${IMAGE_TAG}"
+                }
+            }
+        }
+
+        stage('Deploying to AKS with Helm') {
+            steps {
+                dir('user-service-chart') { // Change directory to new Helm chart location
                     script {
                         sh """
-                        helm upgrade --install ${RELEASE_NAME} ./product-graphql \
+                        helm upgrade --install ${RELEASE_NAME} . \
                             --namespace ${KUBE_NAMESPACE} \
-                            --set image.repository=${ECR_REGISTRY}/${ECR_REPOSITORY} \
+                            --set image.repository=${DOCKER_HUB_USERNAME}/${DOCKER_HUB_REPO} \
                             --set image.tag=${IMAGE_TAG} \
                             --set image.pullPolicy=Always
                         """
+                    }
                 }
             }
         }
     }
+
     post {
         success {
-            echo 'Pipeline executed successfully.'
+            echo '🎉 Pipeline executed successfully!'
         }
         failure {
-            echo 'Pipeline execution failed.'
+            echo '❌ Pipeline execution failed.'
         }
     }
 }

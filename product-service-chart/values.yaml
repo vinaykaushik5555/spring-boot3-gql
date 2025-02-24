@@ -1,0 +1,30 @@
+# values.yaml
+ingress:
+  enabled: false  # Set to true if using an Ingress controller
+
+replicaCount: 3  # Ensures High Availability
+
+image:
+  repository: vinaykaushik/product-service  # Docker Hub repo
+  tag: "latest"  # Default tag, will be overridden in deployment
+  pullPolicy: Always
+
+service:
+  type: LoadBalancer  # Expose externally
+  port: 80
+  targetPort: 8080  # Application runs on port 8080
+
+autoscaling:
+  enabled: true
+  minReplicas: 3
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 50
+  targetMemoryUtilizationPercentage: 80
+
+resources:
+  requests:
+    cpu: 250m
+    memory: 512Mi
+  limits:
+    cpu: 500m
+    memory: 1Gi
