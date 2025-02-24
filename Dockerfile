@@ -5,7 +5,7 @@ FROM openjdk:17-jdk-slim
 WORKDIR /app
 
 # Copy the executable jar file to the container
-COPY target/graphql-app-0.0.1-SNAPSHOT.jar app.jar
+COPY target/product-service-0.0.1-SNAPSHOT.jar app.jar
 
 # Expose the application port
 EXPOSE 8080

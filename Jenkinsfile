@@ -3,11 +3,11 @@ pipeline {
 
     environment {
         GIT_REPO_URL = 'https://github.com/vinaykaushik5555/spring-boot3-gql'
-        GIT_BRANCH = 'main'
+        GIT_BRANCH = 'master'
         MAVEN_TOOL = 'Maven3'
         DOCKER_HUB_USERNAME = 'vinaykaushik'
-        DOCKER_HUB_REPO = 'user-management-service'
-        IMAGE_TAG = "user-management-service-${BUILD_NUMBER}"
+        DOCKER_HUB_REPO = 'product-service'
+        IMAGE_TAG = "product-service-${BUILD_NUMBER}"
         GIT_CREDENTIALS_ID = 'github-credentials'
         DOCKER_CREDENTIALS_ID = 'docker-hub-credentials'
         KUBECONFIG = '/etc/kubernetes/config'
@@ -37,9 +37,8 @@ pipeline {
 
         stage('Build and Run Unit Tests') {
             steps {
-                dir('user-management-service') {
                     sh 'mvn clean test'
-                }
+
             }
         }
 
@@ -56,11 +55,9 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                dir('user-management-service') {
                     script {
                         sh "docker build -t ${DOCKER_HUB_USERNAME}/${DOCKER_HUB_REPO}:${IMAGE_TAG} ."
                     }
-                }
             }
         }
 
@@ -74,7 +71,7 @@ pipeline {
 
         stage('Deploying to AKS with Helm') {
             steps {
-                dir('user-service-chart') { // Change directory to new Helm chart location
+                dir('product-service-chart') { // Change directory to new Helm chart location
                     script {
                         sh """
                         helm upgrade --install ${RELEASE_NAME} . \
